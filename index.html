@@ -11,19 +11,61 @@
       <div class="logo-name">
         <h1>Contact managment application</h1>
       </div>
-      <form action="" method="post">
-        <label for="first-name">First Name:</label>
-        <input class="first-name" type="text" name="first-name" />
-        <label for="last-name">Last Name:</label>
-        <input class="last-name" type="text" name="last-name" />
-        <label for="birthdate">Date of birth:</label>
-        <input class="birthdate" type="date" placeholder="YYYY-MM-DD" />
-        <label for="phone">Phone number:</label>
-        <input class="phone-number" type="number" name="phone" />
-        <label for="e-mail">E-mail:</label>
-        <input class="e-mail" type="email" name="e-mail" />
-        <label for="address">Address:</label>
-        <input class="address" type="text" name="address" />
+      <form>
+        <label for="first-name"
+          >First Name:
+          <input
+            class="first-name"
+            type="text"
+            name="first-name"
+            placeholder="Enter your first name"
+            required
+          />
+        </label>
+        <label for="last-name"
+          >Last Name:
+          <input
+            class="last-name"
+            type="text"
+            name="last-name"
+            placeholder="Enter your last name"
+            required
+          />
+        </label>
+        <label for="birthdate"
+          >Date of birth:
+          <input class="birthdate" type="date" required />
+        </label>
+        <label for="phone"
+          >Phone number:
+          <input
+            class="phone-number"
+            type="tel"
+            name="phone"
+            placeholder="Enter your phone number"
+            required
+          />
+        </label>
+        <label for="e-mail"
+          >E-mail:
+          <input
+            class="e-mail"
+            type="email"
+            name="e-mail"
+            placeholder="Enter your email"
+            required
+          />
+        </label>
+        <label for="address"
+          >Address:
+          <input
+            class="address"
+            type="text"
+            name="address"
+            placeholder="Enter your address"
+          />
+        </label>
+        <input class="submit-button" type="submit" value="Submit" />
       </form>
     </header>
     <div class="container"></div>
