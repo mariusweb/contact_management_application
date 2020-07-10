@@ -2,7 +2,7 @@
   {
     "firstName": "Tomas",
     "lastName": "Tomasius",
-    "dateOfBirth": "05-12-1995",
+    "dateOfBirth": "1995-05-12",
     "phoneNumber": "+37065179354",
     "email": "tomastomasius@gmail.com",
     "address": "Polocko 10-56 .st Vilnius"
@@ -10,7 +10,7 @@
   {
     "firstName": "Algis",
     "lastName": "Algisius",
-    "dateOfBirth": "10-22-1998",
+    "dateOfBirth": "1998-10-22",
     "phoneNumber": "+37065179534",
     "email": "algisalgisius@gmail.com",
     "address": "Kestučio 25-30 .st Vilnius"
@@ -18,7 +18,7 @@
   {
     "firstName": "Rūta",
     "lastName": "Rūtajunė",
-    "dateOfBirth": "01-18-1990",
+    "dateOfBirth": "1990=01-18",
     "phoneNumber": "+37065142154",
     "email": "rūtajun@gmail.com",
     "address": "Trimitų 02 .st Vilnius"
@@ -26,7 +26,7 @@
   {
     "firstName": "Milda",
     "lastName": "Gurgytė",
-    "dateOfBirth": "06-25-2001",
+    "dateOfBirth": "2001-06-25",
     "phoneNumber": "+37063829354",
     "email": "mildagurgyte@gmail.com",
     "address": ""
