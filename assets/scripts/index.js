@@ -134,10 +134,12 @@ const addingUser = () => {
 
     buttonEdit.addEventListener("click", (event) => {
       event.preventDefault();
+      // let tabelCell = document.createElement("td");
+      // tabelCell.classList.add("tabel-cell" + user.id);
+
       let editForm = document.createElement("form");
       editForm.classList.add("edit-form" + user.id);
       let output = document.querySelector(".output" + user.id);
-      console.log(output);
 
       editForm.innerHTML = `
       <input type="submit" value="Save">
@@ -148,8 +150,13 @@ const addingUser = () => {
         <input type="email" required value="${user.email}">
         <input type="text" value="${user.address}">
       `;
-      output = editForm;
-      console.log(editForm);
+      // tabelCell.innerHTML = `${editForm}`;
+      // console.log(tabelCell);
+      const clone = editForm.cloneNode(true);
+
+      output.remove();
+      container.appendChild(clone);
+
       // usersEdit.map((userEdit) => {});
       // location.reload();
     });
