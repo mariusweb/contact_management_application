@@ -1,7 +1,9 @@
 "use strict";
 
+// Calling form attribute from html
 const form = document.querySelector(".input-form");
 
+// Calling attributes from html form attribute
 let firstNameInput = document.querySelector(".first-name");
 let lastNameInput = document.querySelector(".last-name");
 let dateOfBirthInput = document.querySelector(".birthdate");
@@ -9,6 +11,7 @@ let phoneNumberInput = document.querySelector(".phone-number");
 let emailInput = document.querySelector(".e-mail");
 let addressInput = document.querySelector(".address");
 
+// Calling div container attribute from html
 const container = document.querySelector(".container");
 
 // Fetching data from git reposetory
@@ -21,25 +24,35 @@ async function getData() {
 }
 
 // Adding data from JSON file to localstorage
+const resetData = document.createElement("button");
+resetData.classList.add("reset-button");
+resetData.innerText = "Reset";
+container.appendChild(resetData);
 getData().then((data) => {
   function noop() {}
   data.map((user) => {
     function foo() {
       foo = noop();
+
+      // Creating unique id
       let id = Math.random().toString(16).slice(2);
       user.id = id;
       localStorage.setItem("users", JSON.stringify(data));
     }
-    // foo();
+
+    // Resetting storing data to localStorage
+    resetData.addEventListener("click", (e) => {
+      e.preventDefault();
+      foo();
+      location.reload();
+    });
   });
 });
 
 // Adding input values in to localstorage
-const users = JSON.parse(localStorage.getItem("users"));
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   let usersNew = JSON.parse(localStorage.getItem("users")) || [];
-
   let user = {
     firstName: firstNameInput.value,
     lastName: lastNameInput.value,
@@ -47,9 +60,12 @@ form.addEventListener("submit", (event) => {
     phoneNumber: phoneNumberInput.value,
     email: emailInput.value,
     address: addressInput.value,
+
+    // Creating unique id
     id: Math.random().toString(16).slice(2),
   };
 
+  // Checking that inputs have values
   if (
     (user.firstName &&
       user.lastName &&
@@ -70,29 +86,31 @@ form.addEventListener("submit", (event) => {
   }
   location.reload();
 });
-const usersUpdate = JSON.parse(localStorage.getItem("users"));
-console.log(usersUpdate);
 
-// Adding users to html file
-
+// Creating a table attribute for users
 const table = document.createElement("table");
 table.classList.add("users-list");
 container.appendChild(table);
 
+// Add, Edit, Delete, user
 const addingUser = () => {
   let usersNew = JSON.parse(localStorage.getItem("users"));
+
+  // Adding users to html
   usersNew.map((user) => {
+    // Created row <tr> in a table attribute
     let tr = document.createElement("tr");
     tr.classList.add("output" + user.id);
 
+    // Created a delete button for deleting user
     const buttonDelete = document.createElement("button");
     buttonDelete.innerText = "Delete";
     buttonDelete.classList.add("delete" + user.id);
 
+    // Created a edit button for editing user
     const buttonEdit = document.createElement("button");
     buttonEdit.innerText = "Edit";
     buttonEdit.classList.add("edit" + user.id);
-
     tr.innerHTML = `
           
           <td>First name: ${user.firstName}</td>
@@ -103,45 +121,42 @@ const addingUser = () => {
           <td>Address: ${user.address}</td>
           
       `;
-
     tr.prepend(buttonEdit);
     tr.appendChild(buttonDelete);
-
     table.appendChild(tr);
   });
 
-  // Deleting user
-
+  // Editing and Deleting user
   usersNew.map((user) => {
-    // Delete user
-
-    let usersDelete = JSON.parse(localStorage.getItem("users"));
+    // Selecting clicked delete button
     const deleteButton = document.querySelector(".delete" + user.id);
 
+    // Delete user
     deleteButton.addEventListener("click", (event) => {
       event.preventDefault();
-      usersDelete = usersDelete.filter((userDel) => {
+      usersNew = usersNew.filter((userDel) => {
         return userDel.id !== user.id;
       });
-      localStorage.setItem("users", JSON.stringify(usersDelete));
+      localStorage.setItem("users", JSON.stringify(usersNew));
       location.reload();
     });
 
-    // Edit user
-
+    // Selecting clicked edit button
     const buttonEdit = document.querySelector(".edit" + user.id);
 
+    // Edit user
     buttonEdit.addEventListener("click", (event) => {
       event.preventDefault();
 
+      // Created form for edit
       const editForm = document.createElement("form");
       editForm.classList.add("edit-form" + user.id);
       const output = document.querySelector(".output" + user.id);
 
+      // Added Save button to edit form
       const submitEdit = document.createElement("input");
       submitEdit.setAttribute("type", "submit");
       submitEdit.setAttribute("value", "Save");
-
       editForm.innerHTML = `
         <input class="edit-fname" type="text" required value="${user.firstName}">
         <input class="edit-lname" type="text" required value="${user.lastName}">
@@ -150,28 +165,23 @@ const addingUser = () => {
         <input class="edit-email" type="email" required value="${user.email}">
         <input class="edit-address" type="text" value="${user.address}">
       `;
-
       editForm.prepend(submitEdit);
-      // const clone = editForm.cloneNode(true);
-
       output.remove();
       container.appendChild(editForm);
 
-      // location.reload();
+      // Saving edited form
+      // Selecting form that was clicked
       let saveEditForm = document.querySelector(".edit-form" + user.id);
-
       saveEditForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
+        // Selecting inputs from edit form
         let editFirstNameInput = document.querySelector(".edit-fname");
         let editLastNameInput = document.querySelector(".edit-lname");
         let editDateOfBirthInput = document.querySelector(".edit-date");
         let editPhoneNumberInput = document.querySelector(".edit-tel");
         let editEmailInput = document.querySelector(".edit-email");
         let editAddressInput = document.querySelector(".edit-address");
-
-        let usersEdit = JSON.parse(localStorage.getItem("users"));
-
         let editUsers = [
           {
             firstName: editFirstNameInput.value,
@@ -183,14 +193,12 @@ const addingUser = () => {
             id: user.id,
           },
         ];
-        const result = usersEdit.map((userEdit) => {
+        const result = usersNew.map((userEdit) => {
           const newUserEdit = editUsers.find(
             (editUser) => editUser.id === userEdit.id
           );
           return newUserEdit ? newUserEdit : userEdit;
         });
-
-        console.log(result);
         localStorage.setItem("users", JSON.stringify(result));
         editForm.remove();
         container.appendChild(output);
