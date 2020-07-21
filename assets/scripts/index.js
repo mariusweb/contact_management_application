@@ -49,10 +49,6 @@ form.addEventListener("submit", (event) => {
     address: addressInput.value,
     id: Math.random().toString(16).slice(2),
   };
-  let userRepite = {
-    phoneNumber: phoneNumberInput.value,
-    email: emailInput.value,
-  };
 
   if (
     (user.firstName &&
@@ -117,6 +113,8 @@ const addingUser = () => {
   // Deleting user
 
   usersNew.map((user) => {
+    // Delete user
+
     let usersDelete = JSON.parse(localStorage.getItem("users"));
     const deleteButton = document.querySelector(".delete" + user.id);
 
@@ -129,36 +127,75 @@ const addingUser = () => {
       location.reload();
     });
 
-    let usersEdit = JSON.parse(localStorage.getItem("users"));
+    // Edit user
+
     const buttonEdit = document.querySelector(".edit" + user.id);
 
     buttonEdit.addEventListener("click", (event) => {
       event.preventDefault();
-      // let tabelCell = document.createElement("td");
-      // tabelCell.classList.add("tabel-cell" + user.id);
 
-      let editForm = document.createElement("form");
+      const editForm = document.createElement("form");
       editForm.classList.add("edit-form" + user.id);
-      let output = document.querySelector(".output" + user.id);
+      const output = document.querySelector(".output" + user.id);
+
+      const submitEdit = document.createElement("input");
+      submitEdit.setAttribute("type", "submit");
+      submitEdit.setAttribute("value", "Save");
 
       editForm.innerHTML = `
-      <input type="submit" value="Save">
-        <input type="text" required value="${user.firstName}">
-        <input type="text" required value="${user.lastName}">
-        <input type="date" required value="${user.dateOfBirth}">
-        <input type="tel" required value="${user.phoneNumber}">
-        <input type="email" required value="${user.email}">
-        <input type="text" value="${user.address}">
+        <input class="edit-fname" type="text" required value="${user.firstName}">
+        <input class="edit-lname" type="text" required value="${user.lastName}">
+        <input class="edit-date" type="date" required value="${user.dateOfBirth}">
+        <input class="edit-tel" type="tel" required value="${user.phoneNumber}">
+        <input class="edit-email" type="email" required value="${user.email}">
+        <input class="edit-address" type="text" value="${user.address}">
       `;
-      // tabelCell.innerHTML = `${editForm}`;
-      // console.log(tabelCell);
-      const clone = editForm.cloneNode(true);
+
+      editForm.prepend(submitEdit);
+      // const clone = editForm.cloneNode(true);
 
       output.remove();
-      container.appendChild(clone);
+      container.appendChild(editForm);
 
-      // usersEdit.map((userEdit) => {});
       // location.reload();
+      let saveEditForm = document.querySelector(".edit-form" + user.id);
+
+      saveEditForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        let editFirstNameInput = document.querySelector(".edit-fname");
+        let editLastNameInput = document.querySelector(".edit-lname");
+        let editDateOfBirthInput = document.querySelector(".edit-date");
+        let editPhoneNumberInput = document.querySelector(".edit-tel");
+        let editEmailInput = document.querySelector(".edit-email");
+        let editAddressInput = document.querySelector(".edit-address");
+
+        let usersEdit = JSON.parse(localStorage.getItem("users"));
+
+        let editUsers = [
+          {
+            firstName: editFirstNameInput.value,
+            lastName: editLastNameInput.value,
+            dateOfBirth: editDateOfBirthInput.value,
+            phoneNumber: editPhoneNumberInput.value,
+            email: editEmailInput.value,
+            address: editAddressInput.value,
+            id: user.id,
+          },
+        ];
+        const result = usersEdit.map((userEdit) => {
+          const newUserEdit = editUsers.find(
+            (editUser) => editUser.id === userEdit.id
+          );
+          return newUserEdit ? newUserEdit : userEdit;
+        });
+
+        console.log(result);
+        localStorage.setItem("users", JSON.stringify(result));
+        editForm.remove();
+        container.appendChild(output);
+        location.reload();
+      });
     });
   });
 };
