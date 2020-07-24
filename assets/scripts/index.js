@@ -49,7 +49,7 @@ getData().then((data) => {
   });
 });
 
-// Adding input values in to localstorage
+// Adding input values in to localstorage and printing to html
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   let usersNew = JSON.parse(localStorage.getItem("users")) || [];
@@ -65,26 +65,63 @@ form.addEventListener("submit", (event) => {
     id: Math.random().toString(16).slice(2),
   };
 
-  // Checking that inputs have values
+  // Getting user or users that already has value which was printed in inputs
+  const isNotUnique = usersNew.filter((userNew) => {
+    return (
+      userNew.email === user.email || userNew.phoneNumber === user.phoneNumber
+    );
+  });
+  console.log(isNotUnique);
+
+  // Function that shows which value repeats
+  const alertEmailPhone = (isNot) => {
+    let dom = isNot.map((emailPhone) => {
+      if (emailPhone.email === user.email) {
+        return "email";
+      } else if (emailPhone.phoneNumber === user.phoneNumber) {
+        return "phone";
+      } else if (
+        emailPhone.phoneNumber === user.phoneNumber &&
+        emailPhone.email === user.email
+      ) {
+        return "email", "phone";
+      }
+    });
+    return dom;
+  };
+  // Checking that inputs have values,
+  //  making sure email and phone nuber is not repeating
+  //  and alerting that is repeating
   if (
-    (user.firstName &&
-      user.lastName &&
-      user.dateOfBirth &&
-      user.phoneNumber &&
-      user.email &&
-      user.address &&
-      user.id) ||
-    (user.firstName &&
-      user.lastName &&
-      user.dateOfBirth &&
-      user.phoneNumber &&
-      user.email &&
-      user.id)
+    firstNameInput &&
+    user.firstName &&
+    lastNameInput &&
+    user.lastName &&
+    dateOfBirthInput &&
+    user.dateOfBirth &&
+    phoneNumberInput &&
+    user.phoneNumber &&
+    emailInput &&
+    user.email &&
+    user.id &&
+    isNotUnique.length <= 0
   ) {
     usersNew.push(user);
     localStorage.setItem("users", JSON.stringify(usersNew));
+    location.reload();
+  } else if (alertEmailPhone(isNotUnique) == "email") {
+    alert("This email already exist!");
+  } else if (alertEmailPhone(isNotUnique) == "phone") {
+    alert("This phone number already exist!");
+  } else if (
+    (alertEmailPhone(isNotUnique) == "email",
+    "phone" || alertEmailPhone(isNotUnique) == "email",
+    "phone")
+  ) {
+    alert("This email and phone number already exist!");
   }
-  location.reload();
+
+  // location.reload();
 });
 
 // Creating a table attribute for users
@@ -193,16 +230,63 @@ const addingUser = () => {
             id: user.id,
           },
         ];
+
+        // Getting all users with edited one
         const result = usersNew.map((userEdit) => {
           const newUserEdit = editUsers.find(
             (editUser) => editUser.id === userEdit.id
           );
           return newUserEdit ? newUserEdit : userEdit;
         });
-        localStorage.setItem("users", JSON.stringify(result));
-        editForm.remove();
-        container.appendChild(output);
-        location.reload();
+
+        // Getting all users exept edited one
+        const notEditedUsers = usersNew.filter((userEdit) => {
+          const newUserEdit = editUsers.find(
+            (editUser) => editUser.id !== userEdit.id
+          );
+          return newUserEdit;
+        });
+
+        // Getting user that has same value as edited one
+        const notRepeat = notEditedUsers.filter(
+          (checkUser) =>
+            checkUser.email === editUsers[0].email ||
+            checkUser.phoneNumber === editUsers[0].phoneNumber
+        );
+
+        // Function that shows which value repeats
+        const alertEmailPhoneEdit = (isNot) => {
+          let dom = isNot.map((emailPhone) => {
+            if (emailPhone.email === editUsers[0].email) {
+              return "email";
+            } else if (emailPhone.phoneNumber === editUsers[0].phoneNumber) {
+              return "phone";
+            } else if (
+              emailPhone.phoneNumber === editUsers[0].phoneNumber &&
+              emailPhone.email === editUsers[0].email
+            ) {
+              return "email", "phone";
+            }
+          });
+          return dom;
+        };
+        // Printing out edited vesion or alertin for email or phone number repite
+        if (notRepeat.length <= 0) {
+          localStorage.setItem("users", JSON.stringify(result));
+          editForm.remove();
+          container.appendChild(output);
+          location.reload();
+        } else if (alertEmailPhoneEdit(notRepeat) == "email") {
+          alert("This email already exist!");
+        } else if (alertEmailPhoneEdit(notRepeat) == "phone") {
+          alert("This phone number already exist!");
+        } else if (
+          (alertEmailPhoneEdit(notRepeat) == "email",
+          "phone" || alertEmailPhoneEdit(notRepeat) == "phone",
+          "email")
+        ) {
+          alert("This email and phone number already exist!");
+        }
       });
     });
   });
