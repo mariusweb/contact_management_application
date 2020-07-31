@@ -23,10 +23,12 @@ async function getData() {
   return data;
 }
 
-// Adding data from JSON file to localstorage
+// Adding reset button
 const resetData = document.createElement("button");
 resetData.classList.add("reset-button");
 resetData.innerText = "Reset";
+
+// Adding data from JSON file to localstorage
 container.appendChild(resetData);
 getData().then((data) => {
   function noop() {}
@@ -48,6 +50,42 @@ getData().then((data) => {
     });
   });
 });
+
+const CheckUserRegex = class {
+  constructor(user) {
+    this.user = user;
+    this.firsName = new RegExp("^\\D{1,26}$");
+    this.lastName = new RegExp("^\\D{2,35}$");
+    this.dateOfBirth = new RegExp(
+      "^(19\\d{2}|20[0-1]\\d|2020)\\-(0\\d|1[0-2])\\-([0-2]\\d|3[0-1])$"
+    );
+    this.phoneNumber = new RegExp(
+      "^(\\+370|[(]?8)?(\\s~)?[\\s]?[5-9][)]?[\\s]?\\d{3}[\\s]?\\d{4}$"
+    );
+    this.emailAddress = new RegExp("^\\S+@[a-z]+[.][a-z]+$");
+    this.address = new RegExp(
+      "^(\\D{1,85}(\\s\\D{1,85}\\s\\D{1,2}[.])?(\\s\\d{1,4})?(\\-\\d{1,4})?)$|^(?:)$"
+    );
+  }
+  checkFirstName() {
+    return this.firsName.test(this.user.firstName);
+  }
+  checkLastName() {
+    return this.lastName.test(this.user.lastName);
+  }
+  checkDateOfBirth() {
+    return this.dateOfBirth.test(this.user.dateOfBirth);
+  }
+  checkPhoneNumber() {
+    return this.phoneNumber.test(this.user.phoneNumber);
+  }
+  checkEmailAddress() {
+    return this.emailAddress.test(this.user.email);
+  }
+  checkAddress() {
+    return this.address.test(this.user.address);
+  }
+};
 
 // Adding input values in to localstorage and printing to html
 form.addEventListener("submit", (event) => {
@@ -71,7 +109,6 @@ form.addEventListener("submit", (event) => {
       userNew.email === user.email || userNew.phoneNumber === user.phoneNumber
     );
   });
-  console.log(isNotUnique);
 
   // Function that shows which value repeats
   const alertEmailPhone = (isNot) => {
@@ -89,39 +126,48 @@ form.addEventListener("submit", (event) => {
     });
     return dom;
   };
+
+  const testUser = new CheckUserRegex(user);
+  console.log(testUser.checkFirstName());
+
   // Checking that inputs have values,
   //  making sure email and phone nuber is not repeating
   //  and alerting that is repeating
   if (
-    firstNameInput &&
-    user.firstName &&
-    lastNameInput &&
-    user.lastName &&
-    dateOfBirthInput &&
-    user.dateOfBirth &&
-    phoneNumberInput &&
-    user.phoneNumber &&
-    emailInput &&
-    user.email &&
+    testUser.checkFirstName() &&
+    testUser.checkLastName() &&
+    testUser.checkDateOfBirth() &&
+    testUser.checkPhoneNumber() &&
+    testUser.checkEmailAddress() &&
+    testUser.checkAddress() &&
     user.id &&
     isNotUnique.length <= 0
   ) {
     usersNew.push(user);
     localStorage.setItem("users", JSON.stringify(usersNew));
     location.reload();
-  } else if (alertEmailPhone(isNotUnique) == "email") {
+  } else if (alertEmailPhone(isNotUnique) === "email") {
     alert("This email already exist!");
-  } else if (alertEmailPhone(isNotUnique) == "phone") {
+  } else if (alertEmailPhone(isNotUnique) === "phone") {
     alert("This phone number already exist!");
   } else if (
-    (alertEmailPhone(isNotUnique) == "email",
-    "phone" || alertEmailPhone(isNotUnique) == "email",
-    "phone")
+    alertEmailPhone(isNotUnique) === ["email", "phone"] ||
+    alertEmailPhone(isNotUnique) === ["phone", "email"]
   ) {
     alert("This email and phone number already exist!");
+  } else if (!testUser.checkFirstName()) {
+    alert("First name is invalid");
+  } else if (!testUser.checkLastName()) {
+    alert("Last name is invalid");
+  } else if (!testUser.checkDateOfBirth()) {
+    alert("Date of Birth is invalid");
+  } else if (!testUser.checkPhoneNumber()) {
+    alert("This Phone number must be Lithuanian");
+  } else if (!testUser.checkEmailAddress()) {
+    alert("This Email address is invalid");
+  } else if (!testUser.checkAddress()) {
+    alert("This Address is invalid");
   }
-
-  // location.reload();
 });
 
 // Creating a table attribute for users
@@ -135,7 +181,7 @@ const addingUser = () => {
 
   // Adding users to html
   usersNew.map((user) => {
-    // Created row <tr> in a table attribute
+    // Created row <tr> in a table attribute with unique class
     let tr = document.createElement("tr");
     tr.classList.add("output" + user.id);
 
@@ -148,6 +194,8 @@ const addingUser = () => {
     const buttonEdit = document.createElement("button");
     buttonEdit.innerText = "Edit";
     buttonEdit.classList.add("edit" + user.id);
+
+    // Adding users to table
     tr.innerHTML = `
           
           <td>First name: ${user.firstName}</td>
@@ -160,7 +208,7 @@ const addingUser = () => {
       `;
     tr.prepend(buttonEdit);
     tr.appendChild(buttonDelete);
-    table.appendChild(tr);
+    table.prepend(tr);
   });
 
   // Editing and Deleting user
@@ -270,22 +318,44 @@ const addingUser = () => {
           });
           return dom;
         };
+
+        const testUserEdit = new CheckUserRegex(editUsers[0]);
+
         // Printing out edited vesion or alertin for email or phone number repite
-        if (notRepeat.length <= 0) {
+        if (
+          testUserEdit.checkFirstName() &&
+          testUserEdit.checkLastName() &&
+          testUserEdit.checkDateOfBirth() &&
+          testUserEdit.checkPhoneNumber() &&
+          testUserEdit.checkEmailAddress() &&
+          testUserEdit.checkAddress() &&
+          notRepeat.length <= 0
+        ) {
           localStorage.setItem("users", JSON.stringify(result));
           editForm.remove();
           container.appendChild(output);
           location.reload();
-        } else if (alertEmailPhoneEdit(notRepeat) == "email") {
+        } else if (alertEmailPhoneEdit(notRepeat) === "email") {
           alert("This email already exist!");
-        } else if (alertEmailPhoneEdit(notRepeat) == "phone") {
+        } else if (alertEmailPhoneEdit(notRepeat) === "phone") {
           alert("This phone number already exist!");
         } else if (
-          (alertEmailPhoneEdit(notRepeat) == "email",
-          "phone" || alertEmailPhoneEdit(notRepeat) == "phone",
-          "email")
+          alertEmailPhoneEdit(notRepeat) === ["email", "phone"] ||
+          alertEmailPhoneEdit(notRepeat) === ["phone", "email"]
         ) {
           alert("This email and phone number already exist!");
+        } else if (!testUserEdit.checkFirstName()) {
+          alert("First name is invalid");
+        } else if (!testUserEdit.checkLastName()) {
+          alert("Last name is invalid");
+        } else if (!testUserEdit.checkDateOfBirth()) {
+          alert("Date of Birth is invalid");
+        } else if (!testUserEdit.checkPhoneNumber()) {
+          alert("This Phone number must be Lithuanian");
+        } else if (!testUserEdit.checkEmailAddress()) {
+          alert("This Email address is invalid");
+        } else if (!testUserEdit.checkAddress()) {
+          alert("This Address is invalid");
         }
       });
     });
