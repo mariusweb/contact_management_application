@@ -170,33 +170,43 @@ form.addEventListener("submit", (event) => {
   }
 });
 
+window.addEventListener("scroll", () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  if (clientHeight + scrollTop >= scrollHeight - 1) {
+    addingUser(1);
+  }
+});
+
 // Creating a table attribute for users
 const table = document.createElement("table");
 table.classList.add("users-list");
 container.appendChild(table);
 
 // Add, Edit, Delete, user
-const addingUser = () => {
+const addingUser = (range) => {
   let usersNew = JSON.parse(localStorage.getItem("users"));
 
   // Adding users to html
+  console.log(usersNew);
   usersNew.map((user) => {
     // Created row <tr> in a table attribute with unique class
-    let tr = document.createElement("tr");
-    tr.classList.add("output" + user.id);
+    for (let i = 0; i < range; i++) {
+      let tr = document.createElement("tr");
+      tr.classList.add("output" + user.id);
 
-    // Created a delete button for deleting user
-    const buttonDelete = document.createElement("button");
-    buttonDelete.innerText = "Delete";
-    buttonDelete.classList.add("delete" + user.id);
+      // Created a delete button for deleting user
+      const buttonDelete = document.createElement("button");
+      buttonDelete.innerText = "Delete";
+      buttonDelete.classList.add("delete" + user.id);
 
-    // Created a edit button for editing user
-    const buttonEdit = document.createElement("button");
-    buttonEdit.innerText = "Edit";
-    buttonEdit.classList.add("edit" + user.id);
+      // Created a edit button for editing user
+      const buttonEdit = document.createElement("button");
+      buttonEdit.innerText = "Edit";
+      buttonEdit.classList.add("edit" + user.id);
 
-    // Adding users to table
-    tr.innerHTML = `
+      // Adding users to table
+      tr.innerHTML = `
           
           <td>First name: ${user.firstName}</td>
           <td>Last name: ${user.lastName}</td>
@@ -206,9 +216,10 @@ const addingUser = () => {
           <td>Address: ${user.address}</td>
           
       `;
-    tr.prepend(buttonEdit);
-    tr.appendChild(buttonDelete);
-    table.prepend(tr);
+      tr.prepend(buttonEdit);
+      tr.appendChild(buttonDelete);
+      table.prepend(tr);
+    }
   });
 
   // Editing and Deleting user
@@ -361,4 +372,4 @@ const addingUser = () => {
     });
   });
 };
-addingUser();
+addingUser(1);
