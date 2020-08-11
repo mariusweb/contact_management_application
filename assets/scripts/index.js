@@ -44,7 +44,7 @@ getData().then((data) => {
       user.id = id;
       localStorage.setItem("users", JSON.stringify(data));
     }
-
+    foo();
     // Resetting storing data to localStorage
     resetData.addEventListener("click", (e) => {
       e.preventDefault();
