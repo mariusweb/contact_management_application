@@ -254,7 +254,7 @@ const addingUser = (range) => {
     visibleNodeCount = Math.min(itemCount - startNode, visibleNodeCount);
 
     const offsetY = startNode * trRowHeight;
-    console.log(startNode);
+    console.log(itemCount);
 
     // const visibleChildren = new Array(visibleNodeCount)
     //   .fill(null)
