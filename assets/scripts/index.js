@@ -1,5 +1,8 @@
 "use strict";
 
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+};
 // Calling form attribute from html
 const form = document.querySelector(".input-form");
 
@@ -29,7 +32,7 @@ resetData.classList.add("reset-button");
 resetData.innerText = "Reset";
 
 // Adding data from JSON file to localstorage
-container.appendChild(resetData);
+form.appendChild(resetData);
 getData().then((data) => {
   function noop() {}
   data.map((user) => {
@@ -47,6 +50,7 @@ getData().then((data) => {
       e.preventDefault();
       foo();
       location.reload();
+      window.scrollTo(0, 0);
     });
   });
 });
@@ -171,42 +175,44 @@ form.addEventListener("submit", (event) => {
 });
 
 window.addEventListener("scroll", () => {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-
-  if (clientHeight + scrollTop >= scrollHeight - 1) {
-    addingUser(1);
-  }
+  // const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  // if (clientHeight + scrollTop >= scrollHeight - 1) {
+  //   addingUser(1);
+  // }
 });
 
 // Creating a table attribute for users
 const table = document.createElement("table");
 table.classList.add("users-list");
-container.appendChild(table);
+const outTable = document.createElement("div");
+outTable.classList.add("out-table");
+container.appendChild(outTable);
+outTable.appendChild(table);
 
 // Add, Edit, Delete, user
 const addingUser = (range) => {
   let usersNew = JSON.parse(localStorage.getItem("users"));
 
   // Adding users to html
-  console.log(usersNew);
+
   usersNew.map((user) => {
     // Created row <tr> in a table attribute with unique class
-    for (let i = 0; i < range; i++) {
-      let tr = document.createElement("tr");
-      tr.classList.add("output" + user.id);
+    // for (let i = 0; i < range; i++) {
+    let tr = document.createElement("tr");
+    tr.classList.add("output" + user.id);
 
-      // Created a delete button for deleting user
-      const buttonDelete = document.createElement("button");
-      buttonDelete.innerText = "Delete";
-      buttonDelete.classList.add("delete" + user.id);
+    // Created a delete button for deleting user
+    const buttonDelete = document.createElement("button");
+    buttonDelete.innerText = "Delete";
+    buttonDelete.classList.add("delete" + user.id);
 
-      // Created a edit button for editing user
-      const buttonEdit = document.createElement("button");
-      buttonEdit.innerText = "Edit";
-      buttonEdit.classList.add("edit" + user.id);
+    // Created a edit button for editing user
+    const buttonEdit = document.createElement("button");
+    buttonEdit.innerText = "Edit";
+    buttonEdit.classList.add("edit" + user.id);
 
-      // Adding users to table
-      tr.innerHTML = `
+    // Adding users to table
+    tr.innerHTML = `
           
           <td>First name: ${user.firstName}</td>
           <td>Last name: ${user.lastName}</td>
@@ -216,10 +222,46 @@ const addingUser = (range) => {
           <td>Address: ${user.address}</td>
           
       `;
-      tr.prepend(buttonEdit);
-      tr.appendChild(buttonDelete);
-      table.prepend(tr);
-    }
+    tr.prepend(buttonEdit);
+    tr.appendChild(buttonDelete);
+    table.prepend(tr);
+
+    // }
+  });
+
+  // Virtual scroll
+  const heightOfTabel = table.scrollHeight;
+  const trRowHeight = document.querySelector("tr").clientHeight;
+  const itemCount = usersNew.length;
+
+  const totalTableHeight = itemCount * trRowHeight;
+
+  const nodePadding = 2 * trRowHeight;
+
+  container.addEventListener("scroll", () => {
+    const tabelTop = container.scrollTop;
+    const viewportHeight = container.offsetHeight;
+
+    const scrollBottom = tabelTop + viewportHeight;
+    // const nodePaddingBottom = heightOfTabel - scrollBottom;
+    // const nodePadding = tabelTop + nodePaddingBottom;
+
+    let startNode = Math.floor(tabelTop / trRowHeight) - nodePadding;
+    startNode = Math.max(0, startNode);
+
+    let visibleNodeCount =
+      Math.ceil(viewportHeight / trRowHeight) + 2 * nodePadding;
+    visibleNodeCount = Math.min(itemCount - startNode, visibleNodeCount);
+
+    const offsetY = startNode * trRowHeight;
+    console.log(startNode);
+
+    // const visibleChildren = new Array(visibleNodeCount)
+    //   .fill(null)
+    //   .map((_, index) => renderItem(index + startNode));
+
+    // const tableScrollTop = table.offsetTop + document.documentElement.scrollTop;
+    // const someScrollTop = table.scrollTop + table.getBoundingClientRect().top;
   });
 
   // Editing and Deleting user
@@ -372,4 +414,7 @@ const addingUser = (range) => {
     });
   });
 };
-addingUser(1);
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  addingUser(1);
+});
